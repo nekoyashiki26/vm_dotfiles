@@ -1,45 +1,9 @@
-if [[ -f $HOME/.zplug/init.zsh ]]; then
-    source ~/.zplug/init.zsh
-
-    # ここに、導入したいプラグインを記述します！
-
-    # 入力中のコマンドをコマンド履歴から推測し、候補として表示するプラグイン。
-    zplug 'zsh-users/zsh-autosuggestions'
-
-    # Zshの候補選択を拡張するプラグイン。
-    zplug 'zsh-users/zsh-completions'
-
-    # プロンプトのコマンドを色づけするプラグイン
-    zplug 'zsh-users/zsh-syntax-highlighting'
-
-    # pecoのようなインタラクティブフィルタツールのラッパ。
-    zplug 'mollifier/anyframe'
-
-    # シェルの設定を色々いい感じにやってくれる。
-    zplug 'yous/vanilli.sh'
-    #zplug 'yous/lime'
-    zplug 'zsh-users/zsh-history-substring-search'
-    zplug 'yous/lime'
-
-   # Install plugins if there are plugins that have not been installed
-    if ! zplug check --verbose; then
-        printf "Install? [y/N]: "
-        if read -q; then
-            echo; zplug install
-        fi
-    fi
-
-    # Then, source plugins and add commands to $PATH
-    zplug load --verbose
-fi
-
 #
 # Executes commands at the start of an interactive session.
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
-export export XDG_CONFIG_HOME=~/.config
 
 #hub commands install
 #function git(){hub "$@"}
@@ -143,7 +107,7 @@ alias sudo='sudo -E '
 alias so='source'
 alias sd='shutdown -h now'
 alias vi='vim'
-alias vz='nvim ~/.zshrc'
+alias vz='vim ~/.zshrc'
 alias c='cdr'
 alias cl='clear'
 alias sl='sl'
@@ -277,84 +241,4 @@ setopt always_last_prompt  # 無駄なスクロールを避ける
 ## 実行したプロセスの消費時間が3秒以上かかったら
 ## 自動的に消費時間の統計情報を表示する。
 REPORTTIME=3
-
-
-
-function envproxy(){
-	# Function name      : envproxy
-	
-# Author             : Hayato Doi
-	# Outline            : この関数は、環境変数をセットするプログラムである。
-	# Update information : 2系 .<shell>rcに書き込む事で、sourceしなくて良くなった。
-	#                    : ヒアドキュメントのインデントを修正。
-	#
-	# Arguments          : 
-	#              * on     プロキシをセットする
-	#              * off    プロキシを解除する。
-	#              * --version バージョン情報の表示
-	#              * --help ヘルプの表示
-	# Copyright (c) 2015-2016, Hayato Doi
-
-
-	# == Global variable ==
-	ProgramName='envproxy'
-	Version=2.0.1
-	HttpProxy='wwwproxy.kanazawa-it.ac.jp:8080'
-	HttpsProxy='wwwproxy.kanazawa-it.ac.jp:8080'
-	FtpPrpxy='wwwproxy.kanazawa-it.ac.jp:8080'
-	NoProxy='localhost,127.0.0.0/8,::1,*kanazawa-it.ac.jp,*kanazawa-tc.ac.jp,*kitnet.ne.jp,*eagle-net.ne.jp'
-	Copyright='Copyright (c) 2015-2016, Hayato Doi'
-	tab='    '
-	#== Global variable =end
-
-	# == Manual ==
-	ManualText=`cat <<- EOS
-		使用法: ${ProgramName} [オプション]
-		[オプション]
-		${tab}on        プロキシをセットする。
-		${tab}of        プロキシのセットを無効化する。
-		${tab}--version プログラムのバージョン情報を表示する。
-		${tab}--help    プログラムのヘルプを表示する。
-		${ProgramName} に関するバグは< b1517914@planet.kanazawa-it.ac.jp >までご連絡ください。
-		${Copyright}
-	EOS`
-	# == Manual =end
-
-	# == Error Message ==
-	ErrorArgument=`cat <<- EOS
-		コマンドライン引数が間違っています。
-		--help で使い方を確認できます。
-	EOS`
-	# == Error Message =end
-
-	if [ $# -eq 0 ];then
-		echo ${ErrorArgument}
-	fi
-
-	case $1 in
-		on) #echo on
-			export http_proxy=$HttpProxy
-			export https_proxy=$HttpsProxy
-			export ftp_proxy=$FtpPrpxy
-			export no_proxy=$NoProxy
-			;;
-		off) #echo of
-			unset http_proxy
-			unset https_proxy
-			unset ftp_proxy
-			unset no_proxy
-			;;
-		--version) #echo version
-			echo ${ProgramName}' '${Version}
-			echo $Copyright
-			;;
-		--help) #echo help
-			echo ${ManualText}
-			;;
-		--) shift #echo '--'
-			echo ${ErrorArgument}
-			;;
-	esac
-}
-
 
