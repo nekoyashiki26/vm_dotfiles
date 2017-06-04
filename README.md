@@ -1,6 +1,6 @@
 # vm_dotfiles
 
-- These files is used my Virtual Mathines.
+- These files is used my Virtual Machine.
 
   - use softwear
     - zsh
