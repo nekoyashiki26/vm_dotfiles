@@ -83,7 +83,7 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.linuxbrew/bin:$PATH"
 export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
 export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-
+stty erase '^？'
 # 色を使用
 autoload -Uz colors
 colors
