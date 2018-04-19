@@ -1,3 +1,39 @@
+if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
+   zcompile ~/.zshrc
+fi
+if [[ -f $HOME/.zplug/init.zsh ]]; then
+  source ~/.zplug/init.zsh
+
+  # ここに、導入したいプラグインを記述します！
+  # 入力中のコマンドをコマンド履歴から推測し、候補として表示するプラグイン。
+  zplug 'zsh-users/zsh-autosuggestions'
+  # enhancd cd の拡張
+  zplug "b4b4r07/enhancd", use:init.sh as:plugin
+  # Zshの候補選択を拡張するプラグイン。
+  zplug 'zsh-users/zsh-completions'
+
+  # プロンプトのコマンドを色づけするプラグイン
+  zplug 'zsh-users/zsh-syntax-highlighting'
+
+  # pecoのようなインタラクティブフィルタツールのラッパ。
+  #zplug 'mollifier/anyframe'
+  # theme
+  zplug "agkozak/agkozak-zsh-theme"
+  #zplug 'yous/lime'
+  # シェルの設定を色々いい感じにやってくれる。
+  zplug 'yous/vanilli.sh'
+  zplug 'zsh-users/zsh-history-substring-search'
+  # Install plugins if there are plugins that have not been installed
+  if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+      echo; zplug install
+    fi
+  fi
+# Then, source plugins and add commands to $PATH
+  zplug load 
+fi
+
 #
 # Executes commands at the start of an interactive session.
 #
@@ -5,69 +41,39 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
-#hub commands install
-#function git(){hub "$@"}
-local git==git
-branchname=`${git} symbolic-ref --short HEAD 2> /dev/null`
-# ここはプロンプトの設定なので今回の設定とは関係ありません
-if [ $UID -eq 0 ];then
-# ルートユーザーの場合
-PROMPT="%F{red}%n:%f%F{green}%d%f [%m] %%
-"
-else
-# ルートユーザー以外の場合
-PROMPT="%F{cyan}%n:%f%F{green}%d%f [%m] %%
-"
+export XDG_CONFIG_HOME=~/.config
+
+if [ -d $HOME/.anyenv ] ; then
+  export PATH="$HOME/.anyenv/bin:$PATH"
+  eval "$(anyenv init -)"
+  for D in `ls $HOME/.anyenv/envs`
+  do
+    export PATH="$HOME/.anyenv/envs/$D/shims:$PATH"
+  done
 fi
 
 
-# ブランチ名を色付きで表示させるメソッド
-function rprompt-git-current-branch {
-  local branch_name st branch_status
-
-  if [ ! -e  ".git" ]; then
-    # gitで管理されていないディレクトリは何も返さない
-    return
-  fi
-  branch_name=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
-  st=`git status 2> /dev/null`
-  if [[ -n `echo "$st" | grep "^nothing to"` ]]; then
-    # 全てcommitされてクリーンな状態
-    branch_status="%F{green}"
-  elif [[ -n `echo "$st" | grep "^Untracked files"` ]]; then
-    # gitに管理されていないファイルがある状態
-    branch_status="%F{red}?"
-  elif [[ -n `echo "$st" | grep "^Changes not staged for commit"` ]]; then
-    # git addされていないファイルがある状態
-    branch_status="%F{red}+"
-  elif [[ -n `echo "$st" | grep "^Changes to be committed"` ]]; then
-    # git commitされていないファイルがある状態
-    branch_status="%F{yellow}!"
-  elif [[ -n `echo "$st" | grep "^rebase in progress"` ]]; then
-    # コンフリクトが起こった状態
-    echo "%F{red}!(no branch)"
-    return
-  else
-    # 上記以外の状態の場合は青色で表示させる
-    branch_status="%F{blue}"
-  fi
-  # ブランチ名を色付きで表示する
-  echo "${branch_status}[$branch_name]"
+# visual studio code 
+code () {
+if [[ $# = 0 ]]
+then
+    open -a "Visual Studio Code"
+else
+    [[ $1 = /* ]] && F="$1" || F="$PWD/${1#./}"
+    open -a "Visual Studio Code" --args "$F"
+fi
 }
 
 # プロンプトが表示されるたびにプロンプト文字列を評価、置換する
 setopt prompt_subst
 
 # プロンプトの右側(RPROMPT)にメソッドの結果を表示させる
-RPROMPT='`rprompt-git-current-branch`'
 # Customize to your needs...
-export LANG=ja_JP.UTF-8
+export LANG=en_US.UTF-8
+export XDG_CONFIG_HOME="$HOME/.config"
 
-# ls 等の色設定
-export LS_COLORS='di=36;01:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-
-# 補完候補一覧をカラー表示する設定
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+# brew install時のupdateを禁止
+export HOMEBREW_NO_AUTO_UPDATE=1
 
 # 補完候補のカーソル選択を有効にする設定
 zstyle ':completion:*:default' menu select=1
@@ -75,22 +81,17 @@ zstyle ':completion:*:default' menu select=1
 # コマンドエラーの修正
 setopt nonomatch
 
+fpath=(/path/to/homebrew/share/zsh-completions $fpath)
+
+
 #補完を大文字小文字を区別しない
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # パスを追加したい場合
 export PATH="$HOME/bin:$PATH"
 
-export PATH="$HOME/.linuxbrew/bin:$PATH"
-export MANPATH="$HOME/.linuxbrew/share/man:$MANPATH"
-export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-stty erase '^？'
 # 色を使用
 autoload -Uz colors
 colors
-
-# 補完
-autoload -Uz compinit
-compinit
 
 # グローバルエイリアス
 alias -g L='| less'
@@ -98,38 +99,39 @@ alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
 
-
 # エイリアス
-alias l='ls -ltr --color=auto'
-alias la='ls -la --color=auto'
-alias ll='ls -l --color=auto'
+alias l='ls --color=auto -ltr'
+alias pip3='pip3'
+alias airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
+alias pip='pip3'
+alias man='jman'
+alias la='ls --color=auto -la'
+alias ls='ls --color=auto -l'
+alias lun='sudo ifconfig en7 ether b8:6b:23:65:9f:8e'
+alias pupdate='pip3 list --outdated --format=legacy | awk '{print $1}' | xargs pip install -U'
+alias reload='exec $SHELL -l'
+alias new='touch'
 alias sudo='sudo -E '
-alias so='source'
-alias sd='shutdown -h now'
+alias sd='sudo shutdown'
+alias reboot='sudo reboot'
 alias vi='vim'
 alias vz='vim ~/.zshrc'
-alias c='cdr'
-alias cl='clear'
 alias sl='sl'
 # historyに日付を表示
 alias h='fc -lt '%F %T' 1'
 alias cp='cp -i'
-alias rm='rm -i'
-alias mkdir='mkdir -p'
-alias ..='c ../'
-alias back='pushd'
+alias rm='rm -rf'
 alias diff='diff -U1'
-alias vm='sudo vmplayer'
+# google二段階認証
+alias nekotarou26='oathtool --totp --base32 $NEKOTAROU26_KEY | pbcopy'
+alias nekoyaro26='oathtool --totp --base32 $NEKOYARO26_KEY | pbcopy'
+alias hurgenduttu='oathtool --totp --base32 $HURGENDUTTU_KEY | pbcopy'
+alias ddns2017='oathtool --totp --base32 $DDNS2017_KEY | pbcopy'
+alias appletiser='oathtool --totp --base32 $WINDOWS_KEY | pbcopy'
 
 # backspace,deleteキーを使えるように
 stty erase ^H
-bindkey "^[[3~" delete-char
-
-# cdの後にlsを実行
-chpwd() { ls -ltr --color=auto }
-
-# どこからでも参照できるディレクトリパス
-cdpath=(~)
+bindkey "^[[3~" delete-char 
 
 # 補完後、メニュー選択モードになり左右キーで移動が出来る
 zstyle ':completion:*:default' menu select=2
@@ -141,6 +143,36 @@ function mkcd() {
     cd $1
   else
     mkdir -p $1 && cd $1
+  fi
+}
+
+function twitter(){
+  save="-s"
+  THIS_DIR=$(cd $(dirname $0); pwd)
+  cd ~/project/twitter
+  if [ "$1" = "$save" ]; then
+    python3 twitter.py -s
+  else
+    echo 'b'
+    python3 twitter.py
+  fi
+  cd $THIS_DIR
+}
+
+function vpn(){
+  case $1 in 
+    on ) 
+      launchctl load -w /Library/LaunchAgents/net.juniper.pulsetray.plist;;
+    off )
+      launchctl unload -w /Library/LaunchAgents/net.juniper.pulsetray.plist;;
+  esac
+}
+
+function all-kill(){
+  if [[ -n $1 ]]; then
+    ps aux | grep $1 | grep -v grep | awk '{ print "kill -9", $2 }' | zsh
+  else
+    echo 'not found process name'
   fi
 }
 
@@ -157,7 +189,6 @@ export LS_COLORS='di=01;36:ln=01;35:ex=01;32'
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'ex=32'
 
 #ディレクトリ名だけで移動する。
-setopt auto_cd
 
 HISTFILE=~/.zsh_historyx
 HISTSIZE=10000
@@ -183,15 +214,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' keep-prefix
 zstyle ':completion:*' recent-dirs-insert both
 
-### 補完候補
-### _oldlist 前回の補完結果を再利用する。
-### _complete: 補完する。
-### _match: globを展開しないで候補の一覧から補完する。
-### _history: ヒストリのコマンドも補完候補とする。
-### _ignored: 補完候補にださないと指定したものも補完候補とする。
-### _approximate: 似ている補完候補も補完候補とする。
-### _prefix: カーソル以降を無視してカーソル位置までで補完する。
-#zstyle ':completion:*' completer _oldlist _complete _match _history _ignored _approximate _prefix
 zstyle ':completion:*' completer _complete _ignored
 
 ## 補完候補をキャッシュする。
@@ -208,7 +230,10 @@ setopt no_nomatch # git show HEAD^とかrake foo[bar]とか使いたい
 setopt prompt_subst  # PROMPT内で変数展開・コマンド置換・算術演算を実行
 setopt transient_rprompt  # コマンド実行後は右プロンプトを消す
 setopt hist_ignore_dups   # 直前と同じコマンドラインはヒストリに追加しない
-setopt hist_ignore_all_dups  # 重複したヒストリは追加しない
+# ヒストリに追加されるコマンド行が古いものと同じなら古いものを削除
+setopt hist_ignore_all_dups
+# 古いコマンドと同じものは無視 
+setopt hist_save_no_dups
 setopt hist_reduce_blanks
 setopt hist_no_store
 setopt hist_verify
@@ -217,7 +242,7 @@ setopt extended_history  # 履歴ファイルに時刻を記録
 #setopt hist_expand  # 補完時にヒストリを自動的に展開する。
 setopt append_history  # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
 setopt auto_cd  # ディレクトリ名だけで移動
-setopt auto_pushd  # cd したら pushd
+#setopt auto_pushd  # cd したら pushd
 setopt auto_list  # 補完候補が複数ある時に、一覧表示
 setopt auto_menu  # 補完候補が複数あるときに自動的に一覧表示する
 #setopt auto_param_slash
@@ -241,4 +266,40 @@ setopt always_last_prompt  # 無駄なスクロールを避ける
 ## 実行したプロセスの消費時間が3秒以上かかったら
 ## 自動的に消費時間の統計情報を表示する。
 REPORTTIME=3
+manpath=/home/yoshinoriyamaguchi/.linuxbrew/share/man:/usr/local/man:/usr/local/share/man:/usr/share/man/ja:/usr/share/man:/usr/lib/jvm/java-8-oracle/man/ja
+export MANPATH
+source ~/enhancd/init.sh
+source ~/setproxy.sh
+
+function select-history() {
+  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  CURSOR=$#BUFFER
+}
+zle -N select-history
+bindkey '^r' select-history
+
+# pip zsh completion start
+function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" \
+             COMP_CWORD=$(( cword-1 )) \
+             PIP_AUTO_COMPLETE=1 $words[1] ) )
+}
+compctl -K _pip_completion pip
+# pip zsh completion end
+
+
+# pip zsh completion start
+function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" \
+             COMP_CWORD=$(( cword-1 )) \
+             PIP_AUTO_COMPLETE=1 $words[1] ) )
+}
+compctl -K _pip_completion pip
+# pip zsh completion end
 
