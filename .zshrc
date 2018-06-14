@@ -269,7 +269,7 @@ REPORTTIME=3
 manpath=/home/yoshinoriyamaguchi/.linuxbrew/share/man:/usr/local/man:/usr/local/share/man:/usr/share/man/ja:/usr/share/man:/usr/lib/jvm/java-8-oracle/man/ja
 export MANPATH
 source ~/enhancd/init.sh
-source ~/setproxy.sh
+source ~/dotfiles/setproxy.sh
 
 function select-history() {
   BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
