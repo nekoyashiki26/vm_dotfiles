@@ -80,6 +80,7 @@ alias c='clear'
 alias load='exec $SHELL -l'
 alias sudo='sudo -E '
 alias reboot='sudo reboot'
+alias aptu='sudo apt update && sudo apt upgrade -y && sudo apt dist-upgrade -y && sudo apt autoremove -y'
 alias vi='vim'
 alias vz='vim ~/.zshrc'
 alias sl='sl'
@@ -150,3 +151,5 @@ setopt complete_in_word  # カーソル位置で補完する。
 #source ~/enhancd/init.sh
 source ~/dotfiles/setproxy.sh
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
