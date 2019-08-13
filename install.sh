@@ -21,6 +21,8 @@ for f in .??*; do
 done
 git clone https://github.com/zplug/zplug ~/.zplug
 git clone https://github.com/junegunn/fzf.git ~/.fzf
+cd ~/.fzf
+./install
 cat << END
 
 **************************************************
