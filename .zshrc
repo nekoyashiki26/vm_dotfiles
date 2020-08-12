@@ -1,45 +1,28 @@
-if [ ! -f ~/.zshrc.zwc -o ~/.zshrc -nt ~/.zshrc.zwc ]; then
-   zcompile ~/.zshrc
+#----------zsh plugin----------
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 fi
-if [[ -f $HOME/.zplug/init.zsh ]]; then
-  source ~/.zplug/init.zsh
+source $HOME/.zinit/bin/zinit.zsh
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+# コマンド履歴から推測し、候補として表示するプラグイン。
+zinit light 'zsh-users/zsh-autosuggestions'
+# Zshの候補選択を拡張するプラグイン。
+zinit light 'zsh-users/zsh-completions' 
+# cdの拡張
+zinit light "b4b4r07/enhancd" 
+# プロンプトのコマンドを色づけするプラグイン
+zinit light "zsh-users/zsh-syntax-highlighting"
+# theme
+zinit light "agkozak/agkozak-zsh-theme"
+#zinit light 'yous/lime'
+#zinit light 'sindresorhus/pure'
+# シェルの設定を色々いい感じにやってくれる。
+zinit light 'yous/vanilli.sh' 
+zinit light 'zsh-users/zsh-history-substring-search'
 
-  # ここに、導入したいプラグインを記述します！
-  # 入力中のコマンドをコマンド履歴から推測し、候補として表示するプラグイン。
-  zplug 'zsh-users/zsh-autosuggestions'
-  # enhancd cd の拡張
-  zplug "b4b4r07/enhancd", use:init.sh as:plugin
-  # Zshの候補選択を拡張するプラグイン。
-  zplug 'zsh-users/zsh-completions'
-
-  # プロンプトのコマンドを色づけするプラグイン
-  zplug 'zsh-users/zsh-syntax-highlighting'
-
-  # pecoのようなインタラクティブフィルタツールのラッパ。
-  #zplug 'mollifier/anyframe'
-  # theme
-  zplug "agkozak/agkozak-zsh-theme"
-  #zplug 'yous/lime'
-  # シェルの設定を色々いい感じにやってくれる。
-  zplug 'yous/vanilli.sh'
-  zplug 'zsh-users/zsh-history-substring-search'
-  # Install plugins if there are plugins that have not been installed
-  if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-      echo; zplug install
-    fi
-  fi
-# Then, source plugins and add commands to $PATH
-  zplug load 
-fi
-
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
+fpath=(~/.zsh/completion $fpath)
+autoload -Uz compinit && compinit -i
 
 # プロンプトが表示されるたびにプロンプト文字列を評価、置換する
 setopt prompt_subst
@@ -53,9 +36,6 @@ zstyle ':completion:*:default' menu select=1
 
 # コマンドエラーの修正
 setopt nonomatch
-
-fpath=(/path/to/homebrew/share/zsh-completions $fpath)
-
 
 #補完を大文字小文字を区別しない
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -148,8 +128,6 @@ setopt auto_list  # 補完候補が複数ある時に、一覧表示
 setopt auto_menu  # 補完候補が複数あるときに自動的に一覧表示する
 unsetopt list_beep
 setopt complete_in_word  # カーソル位置で補完する。
-#source ~/enhancd/init.sh
-source ~/dotfiles/setproxy.sh
-
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+### End of Zinit's installer chunk

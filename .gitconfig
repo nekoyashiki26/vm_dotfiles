@@ -10,3 +10,4 @@
 	name = YoshinoriYamaguchi
 [core]
 	editor = nvim -c \"set fenc=utf-8\"
+	excludesFile = /home/yy/.gitignore
