@@ -31,6 +31,9 @@ setopt prompt_subst
 # Customize to your needs...
 export LANG=en_US.UTF-8
 
+# pipen 
+export PIPENV_VENV_IN_PROJECT=true
+
 # 補完候補のカーソル選択を有効にする設定
 zstyle ':completion:*:default' menu select=1
 
@@ -131,3 +134,8 @@ setopt complete_in_word  # カーソル位置で補完する。
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 ### End of Zinit's installer chunk
+
+# pyenv起動設定
+export PATH="$PYENV_ROOT/bin:$PATH"
+export PYENV_ROOT="$HOME/.pyenv"
+eval "$(pyenv init -)"
