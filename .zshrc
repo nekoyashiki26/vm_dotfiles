@@ -136,6 +136,6 @@ setopt complete_in_word  # カーソル位置で補完する。
 ### End of Zinit's installer chunk
 
 # pyenv起動設定
-export PATH="$PYENV_ROOT/bin:$PATH"
 export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
