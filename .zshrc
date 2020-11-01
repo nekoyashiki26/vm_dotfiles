@@ -80,25 +80,6 @@ bindkey "^[[3~" delete-char
 # 補完後、メニュー選択モードになり左右キーで移動が出来る
 zstyle ':completion:*:default' menu select=2
 
-# mkdirとcdを同時実行
-function mkcd() {
-  if [[ -d $1 ]]; then
-    echo "$1 already exists!"
-    cd $1
-  else
-    mkdir -p $1 && cd $1
-  fi
-}
-
-function all-kill(){
-  if [[ -n $1 ]]; then
-    ps aux | grep $1 | grep -v grep | awk '{ print "kill -9", $2 }' | zsh
-  else
-    echo 'not found process name'
-  fi
-}
-
-zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'ex=32'
 
 HISTFILE=~/.zsh_historyx
 HISTSIZE=10000
@@ -136,6 +117,6 @@ setopt complete_in_word  # カーソル位置で補完する。
 ### End of Zinit's installer chunk
 
 # pyenv起動設定
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init -)"
