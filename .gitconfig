@@ -9,5 +9,5 @@
 	email = b1518292@planet.kanazawa-it.ac.jp
 	name = YoshinoriYamaguchi
 [core]
-	editor = nvim -c \"set fenc=utf-8\"
+	editor = vi -c \"set fenc=utf-8\"
 	excludesFile = /home/yy/.gitignore
